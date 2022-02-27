@@ -11,7 +11,7 @@ request(link, function (error, response, body) {
     if (!error && response.statusCode == 200) {
         xmlParse.parseString(body, function (error, result) {
             if (error) console.log(error);
-            
+
             var jsonStr = JSON.stringify(result);
             var jsonObj = JSON.parse(jsonStr);
 
@@ -23,11 +23,18 @@ request(link, function (error, response, body) {
         })
     }
     fs.readFile(json_loc, 'utf8', function readFileCallback(err, data) {
-        if (err) {
-            console.log(err);
+        if (fs.existsSync(json_loc)) {
+            if (fs.existsSync(json_loc)) {
+                fs.writeFile(json_loc, '{"data":[]}', 'utf8', function(err, data) { if(err) console.log(err) });
+                toJson(data);
+            } else {
+                toJson(data);
+            }
         }
-        
-        obj = JSON.parse(data);
+    })
+
+    function toJson(data) {
+        var obj = JSON.parse(data);
         obj.data.push({
             serverUptime: parseInt(uptimeXML),
             time: now,
@@ -38,6 +45,8 @@ request(link, function (error, response, body) {
         });
 
         json = JSON.stringify(obj);
-        fs.writeFile(json_loc, json, 'utf8', function(err, result) { if(err) console.log('error', err) });
-    })
+        fs.writeFile(json_loc, json, 'utf8', function (err, data) {
+            if (err) console.log(err)
+        });
+    }
 })
