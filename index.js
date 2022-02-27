@@ -5,7 +5,7 @@ var fs = require('fs'),
 
 // Edit with your link and location of json file
 var link = 'https://tracker.babico.name.tr/stats?mode=everything',
-    json_loc = '/home/ubuntu/webserver/files/tracker-json/tracker.json';
+    json_loc = './tracker.json';
 
 request(link, function (error, response, body) {
     if (!error && response.statusCode == 200) {
@@ -22,18 +22,26 @@ request(link, function (error, response, body) {
             torrentsXML = jsonObj.stats.torrents[0].count_mutex[0];
         })
     }
-    fs.readFile(json_loc, 'utf8', function readFileCallback(err, data) {
-        if (fs.existsSync(json_loc)) {
-            if (fs.existsSync(json_loc)) {
-                fs.writeFile(json_loc, '{"data":[]}', 'utf8', function(err, data) { if(err) console.log(err) });
-                toJson(data);
-            } else {
-                toJson(data);
+    if (fs.existsSync(json_loc)) {
+        fs.readFile(json_loc, 'utf8', function(err, data) { if (err) console.log(err);
+            if (data.length == 0) {
+                fs.writeFile(json_loc, '{"data": []}', 'utf8', function(err, data) { if (err) console.log(err);})
+                toJson();
             }
-        }
-    })
+            else {
+                toJson();
+            }
+        });
+    }
+    else {
+        fs.writeFile(json_loc, '{"data": []}', 'utf8', function(err, data) { if (err) console.log(err);})
+        toJson();
+    }
+})
 
-    function toJson(data) {
+function toJson() {
+    fs.readFile(json_loc, 'utf8', function(err, data) { if (err) console.log(err);
+
         var obj = JSON.parse(data);
         obj.data.push({
             serverUptime: parseInt(uptimeXML),
@@ -43,10 +51,8 @@ request(link, function (error, response, body) {
             torrents: parseInt(torrentsXML),
             completed: parseInt(completedXML)
         });
-
+    
         json = JSON.stringify(obj);
-        fs.writeFile(json_loc, json, 'utf8', function (err, data) {
-            if (err) console.log(err)
-        });
-    }
-})
+        fs.writeFile(json_loc, json, 'utf8', function(err, data) {if (err) console.log(err);});
+    })
+}
