@@ -1,0 +1,14 @@
+{
+  "name": "opentracker-json",
+  "version": "1.0.0",
+  "description": "This is a json data extractor made with node.js for opentracker by erdgeist.",
+  "main": "index.js",
+  "dependencies": {
+    "request": "^2.88.2",
+    "xml2js": "^0.4.23"
+  },
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 3.0.0"
+  }
+}
